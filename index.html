@@ -6,34 +6,26 @@
 <title>Archi&Build</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:sans-serif;background:#111;color:white;text-align:center;}
-header{background:black;padding:40px;font-size:32px;}
-section{padding:60px 10%;}
-.about{background:#1a1a1a;color:#ccc;}
-.gallery{display:flex;justify-content:center;gap:40px;flex-wrap:wrap;margin-top:40px;}
-.gallery img{width:450px;max-width:100%;cursor:pointer;transition:.3s;filter:grayscale(100%);}
-.gallery img:hover{transform:scale(1.05);filter:grayscale(0%);}
-button{margin:10px;padding:10px 20px;background:#333;color:white;border:2px solid white;cursor:pointer;}
-button:hover{background:white;color:black;}
-input, textarea{width:80%;padding:10px;margin:10px;background:#222;color:white;border:1px solid #555;}
-.comment{background:#1a1a1a;margin:10px;padding:10px;}
-footer{background:black;padding:40px;margin-top:60px;color:#aaa;}
-.lightbox{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.9);justify-content:center;align-items:center;}
-.lightbox img{max-width:90%;max-height:90%;}
-.warning{
-position:fixed;
-bottom:-100px;
-left:50%;
-transform:translateX(-50%);
-background:red;
-color:white;
-padding:20px;
-font-weight:bold;
-transition:.5s;
-}
-.warning.show{bottom:20px;}
-nav{margin:30px;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:sans-serif;background:#111;color:white;text-align:center}
+header{background:black;padding:40px;font-size:32px;letter-spacing:2px}
+section{padding:60px 10%}
+.about{background:#1a1a1a;color:#ccc}
+.gallery{display:flex;justify-content:center;gap:40px;flex-wrap:wrap;margin-top:40px}
+.gallery img{width:450px;max-width:100%;cursor:pointer;transition:.3s;filter:grayscale(100%)}
+.gallery img:hover{transform:scale(1.05);filter:grayscale(0%)}
+button{margin:10px;padding:10px 20px;background:#333;color:white;border:2px solid white;cursor:pointer;transition:.3s}
+button:hover{background:white;color:black}
+input,textarea{width:80%;padding:10px;margin:10px;background:#222;color:white;border:1px solid #555}
+.comment{background:#1a1a1a;margin:10px;padding:15px;border-left:4px solid white}
+footer{background:black;padding:40px;margin-top:60px;color:#aaa}
+.lightbox{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.9);justify-content:center;align-items:center}
+.lightbox img{max-width:90%;max-height:90%}
+.warning{position:fixed;bottom:-100px;left:50%;transform:translateX(-50%);
+background:red;color:white;padding:20px;font-weight:bold;transition:.5s;z-index:999}
+.warning.show{bottom:20px}
+nav{margin:30px}
+.stars button{font-size:22px}
 </style>
 </head>
 
@@ -49,13 +41,13 @@ nav{margin:30px;}
 
 <section class="about">
 <h2>O firmie</h2>
-<p>Archi&Build to firma budowlano-remontowa tworzona z pasji i pełnego zaangażowania.</p>
-<p>Realizujemy wszelakie prace — od remontów generalnych po odświeżenia i wykończenia.</p>
-<p>Najważniejsze jest dla nas zadowolenie klienta i wysoka jakość wykonania.</p>
+<p>Archi&Build to firma tworzona z pasji, dokładności i dbałości o każdy detal.</p>
+<p>Realizujemy remonty, wykończenia oraz modernizacje wnętrz.</p>
+<p>Najważniejsza jest jakość i zadowolenie klienta.</p>
 </section>
 
 <section>
-<h2>Moje prace</h2>
+<h2>Moje realizacje</h2>
 <div class="gallery">
 <img src="https://i.ibb.co/8nyC9ptG/zdj-str-int-3.jpg" class="work-img">
 <img src="https://i.ibb.co/F429fPBr/zdj-strona-int.jpg" class="work-img">
@@ -64,7 +56,7 @@ nav{margin:30px;}
 
 <section>
 <h2>Oceń nasze usługi</h2>
-<div>
+<div class="stars">
 <button onclick="addRating(1)">⭐</button>
 <button onclick="addRating(2)">⭐⭐</button>
 <button onclick="addRating(3)">⭐⭐⭐</button>
@@ -82,14 +74,11 @@ nav{margin:30px;}
 <div id="comments"></div>
 </section>
 
-<div class="warning" id="warningBox">
-😠 OSTRZEŻENIE! Niestety nie możesz tego napisać!
-</div>
+<div class="warning" id="warningBox"></div>
 
 <footer>
-<p><strong>Jan Kowalski – Archi&Build (JDG)</strong></p>
-<p>ul. Przykładowa 15, 00-001 Warszawa</p>
-<p>NIP: 123-456-78-90</p>
+<p><strong>Archi&Build</strong></p>
+<p>Kontakt: +48 123 456 789</p>
 </footer>
 
 <div class="lightbox" id="lightbox">
@@ -109,7 +98,7 @@ lightboxImg.src=img.src;
 });
 lightbox.onclick=()=>lightbox.style.display="none";
 
-// KONTAKT NOWA ZAKŁADKA
+// KONTAKT
 function openContact(){
 let w=window.open("","_blank");
 w.document.write(`
@@ -128,17 +117,18 @@ Skopiuj numer
 </script>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 const firebaseConfig = {
-apiKey: "TUTAJ_WKLEJ",
-authDomain: "TWOJPROJEKT.firebaseapp.com",
-databaseURL: "https://TWOJPROJEKT-default-rtdb.firebaseio.com",
-projectId: "TWOJPROJEKT",
-storageBucket: "TWOJPROJEKT.appspot.com",
-messagingSenderId: "XXXX",
-appId: "XXXX"
+  apiKey: "AIzaSyDtKBKAh48nlOyNyPsq-Sly9CuDNGvHu8k",
+  authDomain: "archibuild-ce4c2.firebaseapp.com",
+  databaseURL: "https://archibuild-ce4c2-default-rtdb.firebaseio.com",
+  projectId: "archibuild-ce4c2",
+  storageBucket: "archibuild-ce4c2.firebasestorage.app",
+  messagingSenderId: "1093896650127",
+  appId: "1:1093896650127:web:4669bfe7cdd1b9f7dc1ffa",
+  measurementId: "G-9C3Q946JNB"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -162,19 +152,13 @@ document.getElementById("ratingInfo").innerText=
 "Średnia ocena: "+avg+" ⭐ ("+count+" ocen)";
 });
 
-const badWords=["kurwa","cwel","chuj","pierd","jeba"];
-
 window.addComment=function(){
-let name=document.getElementById("name").value;
-let comment=document.getElementById("comment").value.toLowerCase();
+let name=document.getElementById("name").value.trim();
+let comment=document.getElementById("comment").value.trim();
 
-for(let word of badWords){
-if(comment.includes(word)){
-let box=document.getElementById("warningBox");
-box.classList.add("show");
-setTimeout(()=>box.classList.remove("show"),3000);
+if(name===""||comment===""){
+showWarning("Wpisz imię i komentarz!");
 return;
-}
 }
 
 push(commentsRef,{name:name,comment:comment});
@@ -190,6 +174,13 @@ container.innerHTML+=
 `<div class="comment"><strong>${data.name}</strong><br>${data.comment}</div>`;
 });
 });
+
+function showWarning(text){
+let box=document.getElementById("warningBox");
+box.innerText=text;
+box.classList.add("show");
+setTimeout(()=>box.classList.remove("show"),3000);
+}
 </script>
 
 </body>
