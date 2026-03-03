@@ -1,124 +1,6 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Archi&Build</title>
-
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:sans-serif;background:#111;color:white;text-align:center}
-header{background:black;padding:40px;font-size:32px;letter-spacing:2px}
-section{padding:60px 10%}
-.about{background:#1a1a1a;color:#ccc}
-.gallery{display:flex;justify-content:center;gap:40px;flex-wrap:wrap;margin-top:40px}
-.gallery img{width:450px;max-width:100%;cursor:pointer;transition:.3s;filter:grayscale(100%)}
-.gallery img:hover{transform:scale(1.05);filter:grayscale(0%)}
-button{margin:10px;padding:10px 20px;background:#333;color:white;border:2px solid white;cursor:pointer;transition:.3s}
-button:hover{background:white;color:black}
-input,textarea{width:80%;padding:10px;margin:10px;background:#222;color:white;border:1px solid #555}
-.comment{background:#1a1a1a;margin:10px;padding:15px;border-left:4px solid white}
-footer{background:black;padding:40px;margin-top:60px;color:#aaa}
-.lightbox{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.9);justify-content:center;align-items:center}
-.lightbox img{max-width:90%;max-height:90%}
-.warning{position:fixed;bottom:-100px;left:50%;transform:translateX(-50%);
-background:red;color:white;padding:20px;font-weight:bold;transition:.5s;z-index:999}
-.warning.show{bottom:20px}
-nav{margin:30px}
-.stars button{font-size:22px}
-</style>
-</head>
-
-<body>
-
-<header>
-<h1>Archi&Build</h1>
-</header>
-
-<nav>
-<button onclick="openContact()">Kontakt</button>
-</nav>
-
-<section class="about">
-<h2>O firmie</h2>
-<p>Archi&Build to firma tworzona z pasji, dokładności i dbałości o każdy detal.</p>
-<p>Realizujemy remonty, wykończenia oraz modernizacje wnętrz.</p>
-<p>Najważniejsza jest jakość i zadowolenie klienta.</p>
-</section>
-
-<section>
-<h2>Moje realizacje</h2>
-<div class="gallery">
-<img src="https://i.ibb.co/8nyC9ptG/zdj-str-int-3.jpg" class="work-img">
-<img src="https://i.ibb.co/F429fPBr/zdj-strona-int.jpg" class="work-img">
-</div>
-</section>
-
-<section>
-<h2>Oceń nasze usługi</h2>
-<div class="stars">
-<button onclick="addRating(1)">⭐</button>
-<button onclick="addRating(2)">⭐⭐</button>
-<button onclick="addRating(3)">⭐⭐⭐</button>
-<button onclick="addRating(4)">⭐⭐⭐⭐</button>
-<button onclick="addRating(5)">⭐⭐⭐⭐⭐</button>
-</div>
-<p id="ratingInfo">Średnia ocena: ładowanie...</p>
-</section>
-
-<section>
-<h2>Komentarze</h2>
-<input type="text" id="name" placeholder="Twoje imię">
-<textarea id="comment" placeholder="Napisz komentarz"></textarea>
-<button onclick="addComment()">Dodaj komentarz</button>
-<div id="comments"></div>
-</section>
-
-<div class="warning" id="warningBox"></div>
-
-<footer>
-<p><strong>Archi&Build</strong></p>
-<p>Kontakt: +48 123 456 789</p>
-</footer>
-
-<div class="lightbox" id="lightbox">
-<img id="lightboxImg">
-</div>
-
-<script>
-// LIGHTBOX
-const images=document.querySelectorAll(".work-img");
-const lightbox=document.getElementById("lightbox");
-const lightboxImg=document.getElementById("lightboxImg");
-images.forEach(img=>{
-img.onclick=()=>{
-lightbox.style.display="flex";
-lightboxImg.src=img.src;
-}
-});
-lightbox.onclick=()=>lightbox.style.display="none";
-
-// KONTAKT
-function openContact(){
-let w=window.open("","_blank");
-w.document.write(`
-<body style="background:black;color:white;
-display:flex;flex-direction:column;
-justify-content:center;align-items:center;
-height:100vh;font-family:sans-serif;text-align:center;">
-<h1>Kontakt</h1>
-<h2>+48 123 456 789</h2>
-<button onclick="navigator.clipboard.writeText('+48 123 456 789')">
-Skopiuj numer
-</button>
-</body>
-`);
-}
-</script>
-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getDatabase, ref, push, onValue, set } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDtKBKAh48nlOyNyPsq-Sly9CuDNGvHu8k",
@@ -137,22 +19,39 @@ const db = getDatabase(app);
 const ratingsRef = ref(db,"ratings");
 const commentsRef = ref(db,"comments");
 
+
+// 🔒 JEDNA OCENA NA URZĄDZENIE
 window.addRating=function(stars){
+
+if(localStorage.getItem("rated")){
+showWarning("Możesz ocenić tylko raz z tego urządzenia!");
+return;
+}
+
 push(ratingsRef,{rating:stars});
+localStorage.setItem("rated","true");
 };
 
+
+// LICZENIE ŚREDNIEJ
 onValue(ratingsRef,(snapshot)=>{
 let total=0,count=0;
+
 snapshot.forEach(child=>{
 total+=child.val().rating;
 count++;
 });
+
 let avg=count?(total/count).toFixed(1):0;
+
 document.getElementById("ratingInfo").innerText=
 "Średnia ocena: "+avg+" ⭐ ("+count+" ocen)";
 });
 
+
+// DODAWANIE KOMENTARZA
 window.addComment=function(){
+
 let name=document.getElementById("name").value.trim();
 let comment=document.getElementById("comment").value.trim();
 
@@ -165,13 +64,20 @@ push(commentsRef,{name:name,comment:comment});
 document.getElementById("comment").value="";
 };
 
+
+// WYŚWIETLANIE KOMENTARZY
 onValue(commentsRef,(snapshot)=>{
 let container=document.getElementById("comments");
 container.innerHTML="";
+
 snapshot.forEach(child=>{
 let data=child.val();
+
 container.innerHTML+=
-`<div class="comment"><strong>${data.name}</strong><br>${data.comment}</div>`;
+`<div class="comment">
+<strong>${data.name}</strong><br>
+${data.comment}
+</div>`;
 });
 });
 
@@ -182,6 +88,3 @@ box.classList.add("show");
 setTimeout(()=>box.classList.remove("show"),3000);
 }
 </script>
-
-</body>
-</html>
